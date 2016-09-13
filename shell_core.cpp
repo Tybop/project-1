@@ -12,6 +12,8 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <sstream>
+#include <stdio.h>
+#include <pwd.h>
 
 using namespace std;
 
@@ -75,7 +77,11 @@ int Shell::loop_and_handle_input() {
 
 string Shell::get_prompt(int return_value) {
   // TODO: YOUR CODE GOES HERE
-  return "prompt > "; // replace with your own code
+  char *name;
+  struct passwd *pass;
+  pass = getpwuid(getuid());
+  name = pass -> pw_name;
+  return ((string)name + "\\_0.0_/  "); // replace with your own code
 }
 
 

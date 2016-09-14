@@ -32,7 +32,6 @@
 #include <vector>
 #include <iostream>
 
-
 /**
  * An external reference to the execution environment (ENV vars). For more info,
  * run 'man environ' in a terminal.

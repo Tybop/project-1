@@ -12,8 +12,7 @@
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <sstream>
-#include <stdio.h>
-#include <pwd.h>
+#include <stdlib.h>
 
 using namespace std;
 
@@ -76,12 +75,13 @@ int Shell::loop_and_handle_input() {
 
 
 string Shell::get_prompt(int return_value) {
-  // TODO: YOUR CODE GOES HERE
-  char *name;
-  struct passwd *pass;
-  pass = getpwuid(getuid());
-  name = pass -> pw_name;
-  return ((string)name + "\\_0.0_/  "); // replace with your own code
+  string success = " ◉ ‿ ◉  :";
+  string fail = " (╯°□°)╯︵ ┻━┻  :";
+  int tmp = return_value;
+  if (tmp == 0)
+    return ((string)getenv("USER") + success);
+  else
+    return ((string)getenv("USER") + fail);
 }
 
 
@@ -90,7 +90,7 @@ int Shell::execute_line(char* line) {
   // HINT: leverage readline! This should only be a couple lines of code.
 
   // TODO: save the command to history (again, leverage readline!)
-
+  add_history(line);
   // Tokenize the input string.
   vector<string> tokens = tokenize_input(line);
 

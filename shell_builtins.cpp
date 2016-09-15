@@ -8,15 +8,22 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <readline/history.h>
+#include <dirent.h>
 
 using namespace std;
 
 int Shell::com_ls(vector<string>& argv) {
   if (argv.size() < 2)
     system("dir");
-  else if (argv.size() == 2){ //TODO: Implement ls <directory> functionality
-    chdir(argv[1].c_str());
-    system("dir");
+  else if (argv.size() == 2){
+    DIR* dir = opendir(argv[1].c_str());
+    if (dir){
+      chdir(argv[1].c_str());
+      system("dir");
+    }else{
+      cout << "Directory not listed\n";
+      return 1;
+    }
   }
   else{
     cout << "Too many arguments\n";
@@ -29,6 +36,8 @@ int Shell::com_ls(vector<string>& argv) {
 int Shell::com_cd(vector<string>& argv) {
   if (argv.size() == 2){
     chdir(argv[1].c_str());
+  }else if(argv.size() == 1){
+    chdir(getenv("HOME"));
   }else{
     cout << "Improper number of arguments" <<endl;
     return 1;
@@ -49,6 +58,9 @@ int Shell::com_pwd(vector<string>& argv) {
 
 int Shell::com_alias(vector<string>& argv) {
   //first find = sign then create two strings one before and one after. pass as key and value to alias map else fail the input and explain proper usage
+  /*if (argv.size() > 1){
+    cout << "Improper entry, alias takes no arguments.\nTo store a new alias use format: string=command\nWherestring is unique and command is a shell command." << endl;
+  }*/
   if (argv.size() > 1 && argv[1].find("=",1) != string::npos && !aliases.count(argv[1].substr(0, argv[1].find("=",1)))){ 
     int n = argv[1].find("=",1);
     string key = argv[1].substr(0, n);
@@ -67,7 +79,7 @@ int Shell::com_alias(vector<string>& argv) {
     }
     return 0;
   }else{
-    cout << "Improper entry, alias takes either no arguments or \none argument in the form string=command\nWhere string is unique and command is a shell command" << endl;
+    cout << "Improper entry, alias is either empty or takes one argument.\nTo store a new alias use format: string=command\nWhere string is unique and command is a shell command." << endl;
   return 1;
   }
 }
@@ -95,8 +107,8 @@ int Shell::com_unalias(vector<string>& argv) {
 
 int Shell::com_echo(vector<string>& argv) {
   if (argv.size() < 2){
-    cout << "Echo will print to the screen any arguments placed after it e.g. \necho words\nwords\n";
-    return 1;
+    cout << endl;
+    return 0;
   }
   for (int i = 1; i < argv.size(); i++)
     cout << argv[i] << " "; 
@@ -115,7 +127,7 @@ int Shell::com_history(vector<string>& argv) {
   register HIST_ENTRY **the_list;
   the_list = history_list();
   for(int i = 0; i < length; i++){
-    cout << i << " " << the_list[i]->line << endl;
+    cout << i + 1 << " " << the_list[i]->line << endl;
   }
   return 0;
 }

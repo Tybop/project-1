@@ -15,8 +15,7 @@ int Shell::com_ls(vector<string>& argv) {
   if (argv.size() < 2)
     system("dir");
   else if (argv.size() == 2){ //TODO: Implement ls <directory> functionality
-    //char dir = argv[1];
-    //chdir(dir);
+    chdir(argv[1].c_str());
     system("dir");
   }
   else{
@@ -28,9 +27,12 @@ int Shell::com_ls(vector<string>& argv) {
 
 
 int Shell::com_cd(vector<string>& argv) {
-  // TODO: YOUR CODE GOES HERE
-  cout << "cd called" << endl; // delete when implemented
-  return 0;
+  if (argv.size() == 2){
+    chdir(argv[1].c_str());
+  }else{
+    cout << "Improper number of arguments" <<endl;
+    return 1;
+  }
 }
 
 
@@ -46,23 +48,55 @@ int Shell::com_pwd(vector<string>& argv) {
 
 
 int Shell::com_alias(vector<string>& argv) {
-  // TODO: YOUR CODE GOES HERE
-  cout << "alias called" << endl; // delete when implemented
-  return 0;
+  //first find = sign then create two strings one before and one after. pass as key and value to alias map else fail the input and explain proper usage
+  if (argv.size() > 1 && argv[1].find("=",1) != string::npos && !aliases.count(argv[1].substr(0, argv[1].find("=",1)))){ 
+    int n = argv[1].find("=",1);
+    string key = argv[1].substr(0, n);
+    string value = (argv[1].substr(n+1));
+    for (int i=2; i < argv.size(); i++)
+      value += (" " + argv[i]);
+    aliases.insert(pair<string,string>(key,value));
+    cout << "Alias stored\n";
+    return 0;
+  }else if(argv.size() == 1){
+    if (aliases.empty())
+      cout << "No aliases" << endl;
+    else{
+      for (map<string,string>::iterator it=aliases.begin(); it!=aliases.end(); ++it)
+        cout << it->first << " => " << it->second << '\n';
+    }
+    return 0;
+  }else{
+    cout << "Improper entry, alias takes either no arguments or \none argument in the form string=command\nWhere string is unique and command is a shell command" << endl;
+  return 1;
+  }
 }
 
 
 int Shell::com_unalias(vector<string>& argv) {
-  // TODO: YOUR CODE GOES HERE
-  cout << "unalias called" << endl; // delete when implemented
-  return 0;
+  if (argv.size() > 1){
+    map<string, string>::iterator it;
+    if (argv[1] == "-a"){
+      aliases.erase(aliases.begin(), aliases.end());
+    }else if(aliases.count(argv[1])){
+      it = aliases.find(argv[1]);
+      aliases.erase(it);
+    }else{
+      cout << "alias not found\n";
+      return 1;
+    }
+    return 0;
+  }else{
+    cout << "Not enough arguments" << endl;
+    return 1;
+  }
 }
 
 
 int Shell::com_echo(vector<string>& argv) {
   if (argv.size() < 2){
     cout << "Echo will print to the screen any arguments placed after it e.g. \necho words\nwords\n";
-    return 0;
+    return 1;
   }
   for (int i = 1; i < argv.size(); i++)
     cout << argv[i] << " "; 

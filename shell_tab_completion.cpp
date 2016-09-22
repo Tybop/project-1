@@ -23,7 +23,6 @@ using namespace std;
    * @param matches The vector to fill with matching variables
    */
 void Shell::get_env_completions(const char* text, vector<string>& matches) {
-  //TODO: Implement
   for (char **en=environ; *en; en++){
       string tmp(*en);
       size_t index = tmp.find_first_of("=");
@@ -33,6 +32,11 @@ void Shell::get_env_completions(const char* text, vector<string>& matches) {
       }
   }
   for (map<string,string>::iterator it=localvars.begin(); it!=localvars.end(); ++it){
+    string tmp = text;
+    if (it->first.find(tmp.substr(1)) == 0)
+      matches.push_back("$" + it->first);
+  }
+  for (map<string,string>::iterator it=aliases.begin(); it!=aliases.end(); ++it){
     string tmp = text;
     if (it->first.find(tmp.substr(1)) == 0)
       matches.push_back("$" + it->first);
@@ -49,20 +53,10 @@ void Shell::get_env_completions(const char* text, vector<string>& matches) {
    * @param matches The vector to fill with matching variables
    */
 void Shell::get_command_completions(const char* text, vector<string>& matches) {
-  // TODO: implement
   for (map<string, builtin_t>::iterator it=builtins.begin(); it!=builtins.end(); ++it){
     if (it->first.find(text) == 0)
       matches.push_back(it->first);
   }
-  for (map<string,string>::iterator it=aliases.begin(); it!=aliases.end(); ++it){
-    string tmp = text;
-    if (it->first.find(tmp.substr(1)) == 0)
-      matches.push_back("$" + it->first);
-  }
-  
-  
-  
-  
 }
 
 

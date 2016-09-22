@@ -61,7 +61,7 @@ int Shell::com_alias(vector<string>& argv) {
   /*if (argv.size() > 1){
     cout << "Improper entry, alias takes no arguments.\nTo store a new alias use format: string=command\nWherestring is unique and command is a shell command." << endl;
   }*/
-  if (argv.size() > 1 && argv[1].find("=",1) != string::npos && !aliases.count(argv[1].substr(0, argv[1].find("=",1)))){ 
+  if (argv.size() == 2 && argv[1].find("=",1) != string::npos && !aliases.count(argv[1].substr(0, argv[1].find("=",1)))){ 
     int n = argv[1].find("=",1);
     string key = argv[1].substr(0, n);
     string value = (argv[1].substr(n+1));

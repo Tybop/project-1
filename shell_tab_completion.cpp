@@ -15,14 +15,49 @@
 
 using namespace std;
 
-
+/**
+   * Populates the given matches vector with all the ENV and local variables
+   * that match the given text.
+   *
+   * @param text The text against which to match
+   * @param matches The vector to fill with matching variables
+   */
 void Shell::get_env_completions(const char* text, vector<string>& matches) {
-  // TODO: implement
+  //TODO: Implement
+  for (char **en=environ; *en; en++){
+      string tmp(*en);
+      size_t index = tmp.find_first_of("=");
+      tmp = tmp.substr(0, index);
+      if(tmp.find(text) == 0){
+        matches.push_back("$" + tmp);
+      }
+      
+  }
+  
 }
 
-
+/**
+   * Populates the given matches vector with all the 1) builtin functions,
+   * 2) aliases, and 3) executable files on the user's $PATH that match the
+   * given text.
+   *
+   * @param text The text against which to match
+   * @param matches The vector to fill with matching variables
+   */
 void Shell::get_command_completions(const char* text, vector<string>& matches) {
   // TODO: implement
+  for (map<string, builtin_t>::iterator it=builtins.begin(); it!=builtins.end(); ++it){
+    if (it->first.find(text) == 0)
+      matches.push_back(it->first);
+  }
+  for (map<string,string>::iterator it=aliases.begin(); it!=aliases.end(); ++it){
+    if (it->first.find(text) != string::npos)
+      matches.push_back("$" + it->first);
+  }
+  
+  
+  
+  
 }
 
 
@@ -78,12 +113,12 @@ char* Shell::pop_match(vector<string>& matches) {
     const char* match = matches.back().c_str();
 
     // Delete the last element.
-    matches.pop_back();
+    
 
     // We need to return a copy, because readline deallocates when done.
     char* copy = (char*) malloc(strlen(match) + 1);
     strcpy(copy, match);
-
+    matches.pop_back();
     return copy;
   }
 

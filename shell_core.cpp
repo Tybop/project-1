@@ -88,19 +88,20 @@ string Shell::get_prompt(int return_value) {
 int Shell::execute_line(char* line) {
   //Expand commands from history
   int result = history_expand(line, &line);
-  
+  //cout << "1: " << line << endl;
   // saves the command to history 
   
   add_history(line);
+  //cout << "2: " << line << endl;
   // Tokenize the input string.
   vector<string> tokens = tokenize_input(line);
-
+  //cout << "3: " << line << endl;
   // Handle local variable declarations.
   local_variable_assignment(tokens);
-
+  //cout << "4: " << line << endl;
   // Handle the use of an alias.
   alias_substitution(tokens);
-
+  //cout << "5: " << line << endl;
   // Substitute variable references.
   variable_substitution(tokens);
 
@@ -158,7 +159,7 @@ void Shell::alias_substitution(vector<string>& tokens) {
 
   for (token = tokens.begin(); token != tokens.end(); ) {
     //cout << "1\n";
-    if (token->at(0) == '$') {
+    if (token->at(0) == '$' && aliases.count(token->substr(1))) {
       //cout << "2\n";
       string var_name = token->substr(1);
       if (aliases.count(var_name)){
@@ -174,7 +175,7 @@ void Shell::alias_substitution(vector<string>& tokens) {
 
 void Shell::variable_substitution(vector<string>& tokens) {
   vector<string>::iterator token;
-
+  //cout << tokens.size();
   for (token = tokens.begin(); token != tokens.end(); ) {
     //cout << "a" + token->substr(0);
     if (token->at(0) == '$') {

@@ -33,7 +33,8 @@ void Shell::get_env_completions(const char* text, vector<string>& matches) {
       }
   }
   for (map<string,string>::iterator it=localvars.begin(); it!=localvars.end(); ++it){
-    if (it->first.find(text) != string::npos)
+    string tmp = text;
+    if (it->first.find(tmp.substr(1)) == 0)
       matches.push_back("$" + it->first);
   }
   
@@ -54,7 +55,8 @@ void Shell::get_command_completions(const char* text, vector<string>& matches) {
       matches.push_back(it->first);
   }
   for (map<string,string>::iterator it=aliases.begin(); it!=aliases.end(); ++it){
-    if (it->first.find(text) != string::npos)
+    string tmp = text;
+    if (it->first.find(tmp.substr(1)) == 0)
       matches.push_back("$" + it->first);
   }
   

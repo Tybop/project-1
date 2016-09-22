@@ -106,10 +106,7 @@ int Shell::com_unalias(vector<string>& argv) {
 
 
 int Shell::com_echo(vector<string>& argv) {
-  if (argv.size() < 2){
-    cout << endl;
-    return 0;
-  }
+  //cout << argv.size();
   for (int i = 1; i < argv.size(); i++)
     cout << argv[i] << " "; 
   cout << endl;

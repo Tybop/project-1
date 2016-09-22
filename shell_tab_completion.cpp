@@ -27,11 +27,14 @@ void Shell::get_env_completions(const char* text, vector<string>& matches) {
   for (char **en=environ; *en; en++){
       string tmp(*en);
       size_t index = tmp.find_first_of("=");
-      tmp = tmp.substr(0, index);
+      tmp = "$" + tmp.substr(0, index);
       if(tmp.find(text) == 0){
-        matches.push_back("$" + tmp);
+        matches.push_back(tmp);
       }
-      
+  }
+  for (map<string,string>::iterator it=localvars.begin(); it!=localvars.end(); ++it){
+    if (it->first.find(text) != string::npos)
+      matches.push_back("$" + it->first);
   }
   
 }

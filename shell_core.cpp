@@ -86,10 +86,11 @@ string Shell::get_prompt(int return_value) {
 
 
 int Shell::execute_line(char* line) {
-  // TODO: expand the command from history using !!, !-N, etc
-  // HINT: leverage readline! This should only be a couple lines of code.
-
-  // TODO: save the command to history (again, leverage readline!)
+  //Expand commands from history
+  int result = history_expand(line, &line);
+  
+  // saves the command to history 
+  
   add_history(line);
   // Tokenize the input string.
   vector<string> tokens = tokenize_input(line);
@@ -147,6 +148,7 @@ void Shell::local_variable_assignment(vector<string>& tokens) {
 
     // Erase the token and advance to the next one.
     token = tokens.erase(token);
+    //cout << "local var stored\n";
   }
 }
 
@@ -174,14 +176,19 @@ void Shell::variable_substitution(vector<string>& tokens) {
   vector<string>::iterator token;
 
   for (token = tokens.begin(); token != tokens.end(); ) {
+    //cout << "a" + token->substr(0);
     if (token->at(0) == '$') {
+      //cout << "b";
       string var_name = token->substr(1);
 
       if (getenv(var_name.c_str()) != NULL) {
+        //cout << 1;
         *token = getenv(var_name.c_str());
       } else if (localvars.find(var_name) != localvars.end()) {
+        //cout << 2;
         *token = localvars.find(var_name)->second;
       } else {
+        //cout << 3;
         token = tokens.erase(token);
         continue;
       }

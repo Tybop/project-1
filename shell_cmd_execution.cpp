@@ -22,17 +22,20 @@ using namespace std;
 
 int Shell::execute_external_command(vector<string>& tokens) {
 
-  int status;
+  int status = 0;
   pid_t pid = fork();
   pid_t waited;
 
   switch(pid){
     case -1:
       cout << "External call failed (fork failure).\n";
+      status = 1;
+      break;
     case 0:
       execlp(("/bin/"+tokens[0]).c_str(), tokens[0].c_str(),NULL);
       if (errno != 0){
         cout << "External call failed (command: " << tokens[0] << " not found)\n";
+        status = 1;
       }
       break;
     default:

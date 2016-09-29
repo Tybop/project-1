@@ -1,10 +1,16 @@
 # Project 1
 
-Your final submission must contain a README file with the following:
- * Your name.
- * A list of all the files in your submission and what each does.
- * Any unusual / interesting features in your programs.
- * Approximate number of hours you spent on the project.
- You must submit a version of your shell with the following features:
-•  All builtin commands must be implemented and working (e.g., aliases should be usable)
-•  Prompt should show username and indicate status of previous command
+Tyler Zachary Brown
+History.txt: Stores the history from each session
+main.cpp: calls an instance of shell and begins the loop
+makefile: creates the shell executable
+shell.h: holds the function definitions and variable definitions for the shell
+shell_builtins.cpp: Contains the implementations of each builtin function
+shell_cmd_execution.cpp: Contatins implementation for calling external commands
+shell_core.cpp: contains functions to handle arguments that are passed through the command prompt
+shell_tab_completion.cpp: Implements tab completion for user
+
+Unique features: Contains residual history from previous instances and can run multiple (but seperate) commands from the same line
+
+Hours spent: ~25
+

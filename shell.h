@@ -299,10 +299,20 @@ private:
   int execute_external_command(std::vector<std::string>& argv);
 
   // Handles file redirects
-  int file_redirect(std::vector<std::string>& argv);
+  int file_redirect(std::vector<std::string>& argv, std::vector<int> typeTarget);
 
   // Returns stdin or stdout to default
   int file_reset(int to_close);
+
+  // Handles piping
+  int handle_pipes(std::vector<std::string>& argv);
+
+  // Checks for pipes in args and also checks for < in future args
+  int check_for_pipes(std:vector<std:string> argv);
+
+  // Gathers info on any file redirects
+  std::vector<int> check_file_redirect(std::vector<std::string>& argv);
+
 
 // CONSTANTS AND MEMBERS (shell_core.cpp)
 private:

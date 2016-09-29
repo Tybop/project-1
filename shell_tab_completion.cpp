@@ -23,6 +23,7 @@ using namespace std;
    * @param matches The vector to fill with matching variables
    */
 void Shell::get_env_completions(const char* text, vector<string>& matches) {
+  // Gets environment variable
   for (char **en=environ; *en; en++){
       string tmp(*en);
       size_t index = tmp.find_first_of("=");
@@ -31,17 +32,19 @@ void Shell::get_env_completions(const char* text, vector<string>& matches) {
         matches.push_back(tmp);
       }
   }
+  // Gets local variables
   for (map<string,string>::iterator it=localvars.begin(); it!=localvars.end(); ++it){
     string tmp = text;
     if (it->first.find(tmp.substr(1)) == 0)
       matches.push_back("$" + it->first);
   }
+  // Gets aliases
   for (map<string,string>::iterator it=aliases.begin(); it!=aliases.end(); ++it){
     string tmp = text;
     if (it->first.find(tmp.substr(1)) == 0)
       matches.push_back("$" + it->first);
   }
-  
+
 }
 
 /**
@@ -57,6 +60,8 @@ void Shell::get_command_completions(const char* text, vector<string>& matches) {
     if (it->first.find(text) == 0)
       matches.push_back(it->first);
   }
+
+
 }
 
 
@@ -112,7 +117,7 @@ char* Shell::pop_match(vector<string>& matches) {
     const char* match = matches.back().c_str();
 
     // Delete the last element.
-    
+
 
     // We need to return a copy, because readline deallocates when done.
     char* copy = (char*) malloc(strlen(match) + 1);

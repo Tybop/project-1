@@ -16,39 +16,55 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <errno.h>
+#include <fcntl.h>
+#include <termios.h>
+//#include "util.h"
 
 using namespace std;
 
 
 int Shell::execute_external_command(vector<string>& tokens) {
-  vector<int> file_status = check_file_redirect(tokens);
+
   int pipe_status = check_for_pipes(tokens);
-  if (file_status[0] == -1 || pipe_status == 2) // Catches bad redirections and conflicting pipe calls
+
+  if (pipe_status == 2) // Catches bad redirections and conflicting pipe calls
   return 1;
 
-  int file_code = file_redirect(tokens, file_status);
+  if (pipe_status == 1){
+  return handle_pipes(tokens);
+  }else
+  return run_external_command(tokens);
+  return 0;
+}
 
+int Shell::run_external_command(vector<string>& tokens){
+  vector<int> file_status;
+  file_status.push_back(-1);
+  file_status = check_file_redirect(tokens);
+  if (file_status[0] == -1)
+    return 1;
+  int file_code = file_redirect(tokens, file_status);
 
   pid_t pid = fork();
   pid_t waited;
-
   switch(pid){
     case -1:
-    cout << "External call failed (fork failure).\n";
-    break;
+      cout << "External call failed (fork failure).\n";
+      break;
     case 0:
-    execlp(("/bin/"+tokens[0]).c_str(), tokens[0].c_str(),NULL);
-    if (errno != 0){
-      cout << "External call failed (command: " << tokens[0] << " not found)\n";
-    }
-    break;
+      execlp(("/bin/"+tokens[0]).c_str(), tokens[0].c_str(),NULL);
+      if (errno != 0){
+        cout << "External call failed (command: " << tokens[0] << " not found)\n";
+      }
+      break;
     default:
-    waited = waitpid(pid, NULL, 0);
-    file_reset(file_status);
-    if (errno != 0)
-    exit(0);
-    return errno;
-  }
+      waited = waitpid(pid, NULL, 0);
+      file_reset(file_code);
+      if (errno != 0)
+      exit(0);
+      return errno;
+    }
+    return 0;
 }
 
 int Shell::check_for_pipes(vector<string> argv){
@@ -65,17 +81,6 @@ int Shell::check_for_pipes(vector<string> argv){
 }
 
 int Shell::handle_pipes(vector<string>& argv){
-
-  int numCmds = 0;
-  int pipeArr[2];
-
-  for (int i = 0; i < argv.size(); i++){
-    if (argv[i] == "|"){
-			numCmds++;
-		}
-  }numCmds++;
-
-
 
 }
 
@@ -97,7 +102,8 @@ vector<int> Shell::check_file_redirect(vector<string>& argv){
   for (int i = 0; i < argv.size(); i++){
     if (argv[i] == "|"){
       retVal.push_back(-1);
-      cout << "The out put from a piped command is inputed into the next command not an external file.\n";
+      retVal.push_back(-1);
+      cout << "The output from a piped command is inputed into the next command not an external file.\n";
       break;
     }else if (argv[i] == ">"){
       retVal.push_back(1);
@@ -113,7 +119,11 @@ vector<int> Shell::check_file_redirect(vector<string>& argv){
       break;
     }
   }
-  if (targetFile == argv.size())
+  if (retVal.empty()){
+    retVal.push_back(0);
+    retVal.push_back(0);
+  }
+  if (retVal[1] == argv.size())
   {
     cout << "You must supply a file for the program to access.\n";
     retVal[0] = -1;

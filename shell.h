@@ -308,10 +308,13 @@ private:
   int handle_pipes(std::vector<std::string>& argv);
 
   // Checks for pipes in args and also checks for < in future args
-  int check_for_pipes(std:vector<std:string> argv);
+  int check_for_pipes(std::vector<std::string> argv);
 
   // Gathers info on any file redirects
   std::vector<int> check_file_redirect(std::vector<std::string>& argv);
+
+  // Does the actual fork and exec commands
+  int run_external_command(std::vector<std::string>& tokens);
 
 
 // CONSTANTS AND MEMBERS (shell_core.cpp)

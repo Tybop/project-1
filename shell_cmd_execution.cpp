@@ -32,12 +32,12 @@ int Shell::execute_external_command(vector<string>& tokens) {
     case 0:
       execlp(("/bin/"+tokens[0]).c_str(), tokens[0].c_str(),NULL);
       if (errno != 0){
-        cout << "External call failed (command not found)\n";
+        cout << "External call failed (command: " << tokens[0] << " not found)\n";
       }
       break;
     default:
       waited = waitpid(pid, NULL, 0);
-      return errno;
       exit(0);
+      return errno;
   }
 }

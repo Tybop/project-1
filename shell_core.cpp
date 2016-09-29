@@ -89,8 +89,8 @@ int Shell::execute_line(char* line) {
   //Expand commands from history
   int result = history_expand(line, &line);
   //cout << "1: " << line << endl;
-  // saves the command to history 
-  
+  // saves the command to history
+
   add_history(line);
   //cout << "2: " << line << endl;
   // Tokenize the input string.
@@ -104,11 +104,9 @@ int Shell::execute_line(char* line) {
   //cout << "5: " << line << endl;
   // Substitute variable references.
   variable_substitution(tokens);
-
   // Execute the command.
   return dispatch_command(tokens);
 }
-
 
 vector<string> Shell::tokenize_input(char* line) {
   vector<string> tokens;
@@ -199,11 +197,29 @@ void Shell::variable_substitution(vector<string>& tokens) {
   }
 }
 
+int Shell::handle_pipes(vector<string>& argv){
+  vector<string> pipedCommand;
+  int failedComm = 0;
+  for (int i = 0; i < argv.size(); i++){
+      if (argv[i] != "|")
+        pipedCommand.push_back(argv[i]);
+      else{
+        failedComm = dispatch_command(pipedCommand);
+        pipedCommand.clear();
+        if (failedComm != 0)
+          return 1;
+      }
+  }
+  argv = pipedCommand;
+  return 0;
+}
 
 int Shell::dispatch_command(vector<string>& argv) {
   int return_value = 0;
 
   if (argv.size() != 0) {
+    if (handle_pipes(argv) == 1)
+      return 1;
     map<string, builtin_t>::iterator cmd = builtins.find(argv[0]);
 
     if (cmd == builtins.end()) {

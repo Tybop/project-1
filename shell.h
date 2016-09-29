@@ -129,6 +129,12 @@ private:
    */
   int dispatch_command(std::vector<std::string>& argv);
 
+ /**
+  *
+  * Hopefully this will handle pipes by creating a
+  * sorta recursive call to dispatch command,
+  */
+  int handle_pipes(std::vector<std::string>& argv);
 // BUILTINS (shell_builtins.cpp)
 private:
 

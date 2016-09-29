@@ -9,6 +9,7 @@
 #include "shell.h"
 #include <cstdlib>
 #include <iostream>
+#include <fstream>
 #include <readline/history.h>
 #include <readline/readline.h>
 #include <sstream>
@@ -45,6 +46,17 @@ Shell::Shell() {
 
 int Shell::loop_and_handle_input() {
   // The return value of the last command executed.
+  ifstream historyFile;
+  historyFile.open("history.txt", ios::in);
+  if (!historyFile.is_open())
+    cout << "Failed to load history";
+  else {
+    string line;
+    while(getline(historyFile, line)){
+      add_history(line.c_str());
+    }historyFile.close();
+  }
+
   int return_value = 0;
 
   while (true) {
@@ -92,6 +104,17 @@ int Shell::execute_line(char* line) {
   // saves the command to history
 
   add_history(line);
+
+  string line2 = line;
+  ofstream historyFile;
+  historyFile.open("history.txt", ios::app);
+  if (historyFile.is_open())
+  {
+    historyFile << line2 << "\n";
+    historyFile.close();
+  }
+  else cout << "Unable to open file";
+
   //cout << "2: " << line << endl;
   // Tokenize the input string.
   vector<string> tokens = tokenize_input(line);

@@ -37,6 +37,7 @@ int Shell::execute_external_command(vector<string>& tokens) {
       break;
     default:
       waited = waitpid(pid, NULL, 0);
+      return errno;
       exit(0);
   }
 }

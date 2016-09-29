@@ -11,6 +11,11 @@
 #include <iostream>
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <sys/wait.h>
+#include <sys/types.h>
+#include <signal.h>
+#include <errno.h>
 
 using namespace std;
 
@@ -24,12 +29,14 @@ int Shell::execute_external_command(vector<string>& tokens) {
   switch(pid){
     case -1:
       cout << "External call failed (fork failure).\n";
-      return 1;
     case 0:
       execlp(("/bin/"+tokens[0]).c_str(), tokens[0].c_str(),NULL);
-      waited = waitpid(pid, &status,WIFEXITED);
+      if (errno != 0){
+        cout << "External call failed (command not found)\n";
+      }
       break;
     default:
-      break;
+      waited = waitpid(pid, NULL, 0);
+      exit(0);
   }
 }

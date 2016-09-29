@@ -197,11 +197,11 @@ void Shell::variable_substitution(vector<string>& tokens) {
   }
 }
 
-int Shell::handle_pipes(vector<string>& argv){
+int Shell::handle_back_to_back(vector<string>& argv){
   vector<string> pipedCommand;
   int failedComm = 0;
   for (int i = 0; i < argv.size(); i++){
-      if (argv[i] != "|")
+      if (argv[i] != ")(")
         pipedCommand.push_back(argv[i]);
       else{
         failedComm = dispatch_command(pipedCommand);
@@ -218,7 +218,7 @@ int Shell::dispatch_command(vector<string>& argv) {
   int return_value = 0;
 
   if (argv.size() != 0) {
-    if (handle_pipes(argv) == 1)
+    if (handle_back_to_back(argv) == 1)
       return 1;
     map<string, builtin_t>::iterator cmd = builtins.find(argv[0]);
 

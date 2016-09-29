@@ -60,7 +60,8 @@ void Shell::get_command_completions(const char* text, vector<string>& matches) {
     if (it->first.find(text) == 0)
       matches.push_back(it->first);
   }
-
+  // TODO: Make an iterator through $PATH object maybe use opendir to get list of
+  // contents then check if !directory and complete if so
 
 }
 

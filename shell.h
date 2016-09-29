@@ -131,10 +131,10 @@ private:
 
  /**
   *
-  * Hopefully this will handle pipes by creating a
+  * Creates ability for back to back independent commands using a
   * sorta recursive call to dispatch command,
   */
-  int handle_pipes(std::vector<std::string>& argv);
+  int handle_back_to_back(std::vector<std::string>& argv);
 // BUILTINS (shell_builtins.cpp)
 private:
 
@@ -297,6 +297,12 @@ private:
    * @return The return code of the operation
    */
   int execute_external_command(std::vector<std::string>& argv);
+
+  // Handles file redirects
+  int file_redirect(std::vector<std::string>& argv);
+
+  // Returns stdin or stdout to default
+  int file_reset(int to_close);
 
 // CONSTANTS AND MEMBERS (shell_core.cpp)
 private:
